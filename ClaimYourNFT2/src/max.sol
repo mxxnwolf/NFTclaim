@@ -5,8 +5,9 @@ pragma solidity ^0.8.0;
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC1155/ERC1155.sol";
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol";
 import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/utils/Strings.sol";
+import "./whitelisting.sol";
 
-contract MG is ERC1155, Ownable {
+contract MG is ERC1155, Ownable, whitelisting {
     uint256 public constant N0 = 0;
     //uint256 public constant N1 = 1;
 
@@ -26,7 +27,8 @@ contract MG is ERC1155, Ownable {
         uint256 id,
         uint256 amount
     ) public {
-        _safeTransferFrom(0x40802D5f86596786e7aFdA3f42AF4DD5834dB137, msg.sender, id, amount, "");
+        require(whitelist(msg.sender) == true), "complete the game first"); 
+        _safeTransferFrom(address(this), msg.sender, id);
     }
 
     function uri(uint256 tokenId) override public view returns (string memory) {
