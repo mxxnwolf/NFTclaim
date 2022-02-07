@@ -23,7 +23,7 @@ contract whitelisting {
         _;
     }
 
-    function whitelist(address _add) external{
+    function whitelist(address _add) external Owner{
         whitelist[_add] = true;
     }
 
