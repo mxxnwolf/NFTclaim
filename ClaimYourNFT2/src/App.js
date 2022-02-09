@@ -1,6 +1,6 @@
 // import logo from './logo.svg';
 import './App.css';
-
+import react,{useState,useEffect} from 'react';
 import Web3 from "web3";
 
 
@@ -9,6 +9,7 @@ function App() {
 
 
   const [nft, setnft] = useState({});
+  const [whitelist, setwhitelist] = useState({});
   const [address, setaddress] = useState('');
 
   useEffect(() => {
@@ -47,8 +48,80 @@ function App() {
     const networkId = await web3.eth.net.getId();
 
     // const hell = Helloabi.networks[networkId];
-    if (networkId == 80001) {
-      alert("you are connected to polygon")
+    if (networkId == 97) {
+      alert("you are connected to bsc test")
+      const white = new web3.eth.Contract([
+        {
+          "inputs": [],
+          "stateMutability": "nonpayable",
+          "type": "constructor"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "add",
+              "type": "address"
+            }
+          ],
+          "name": "changeadmin",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "_whitelistedAddress",
+              "type": "address"
+            }
+          ],
+          "name": "verifyUser",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "",
+              "type": "address"
+            }
+          ],
+          "name": "whitelist",
+          "outputs": [
+            {
+              "internalType": "bool",
+              "name": "",
+              "type": "bool"
+            }
+          ],
+          "stateMutability": "view",
+          "type": "function"
+        },
+        {
+          "inputs": [
+            {
+              "internalType": "address",
+              "name": "_add",
+              "type": "address"
+            }
+          ],
+          "name": "whitelist_",
+          "outputs": [],
+          "stateMutability": "nonpayable",
+          "type": "function"
+        }
+      ],"0x58adf1F782518F83dd87fDCED65498dCc3695486")
+      setwhitelist(white)
       const contract = new web3.eth.Contract([
         {
           "inputs": [],
@@ -496,22 +569,24 @@ function App() {
           "stateMutability": "view",
           "type": "function"
         }
-      ], "0xf9d54299ab0e64cd7212b726fa256174919d68a6");
+      ], "0xf9d54299ab0e64cd7212b726fa256174919d68a6");//put deployed address
       setnft(contract);
     }
     else {
-      alert("connect to polygon and refresh")
+      alert("connect to bsc test and refresh")
     }
   }
 
+  // let userAddress = ["0x74c5D75F390B8b479CcB086E171eAf5b18AbA6e1"]
+  // let tokenId = [1,2]
+  // let amount = [1000]
 
   const mintnft = async () => {
     try {
       
-      await nft.methods.mint(userAddress, tokenId, amount).send({ from: address }).on('transactionHash', (hash) => {
+      await nft.methods.mint(address, 1, 1000).send({ from: address }).on('transactionHash', (hash) => {
           //success mint
-          console.log(`${tok.tokenId} is minted`);
-          successtx.push(tok.tokenId);
+          console.log(hash);
         })
     }
     catch (err) {
@@ -519,18 +594,37 @@ function App() {
     }
   }
 
+  const whitel = async () => {
+    try {
+      await whitelist.methods.whitelist_(address).send({ from: address }).on('transactionHash', (hash) => {
+          console.log(hash);
+        })
+    }
+    catch (err) {
+      console.log(err);
+    }
+  }
+  
+
   
 
   return (
-    <div className="App">
-    <div>
-    <button onClick={() => { mintnft() }} style={{ marginLeft: "10px" }}>
-        mint
-      </button>
-      <hr/>
+      <div className="App">
+        <header className="App-header">
+          You won this game! Claim Your Prize!
+        </header>
+        <div className="image-container">
+          <img
+            src="https://ik.imagekit.io/bayc/assets/ape3.png"
+            className="image"
+            alt="nft"
+          />
+        </div>
+
+        <button className="button" onClick={() => { mintnft() }}>Claim NFT</button>
+        <button className="button" onClick={() => { whitel() }}>whitelist</button>
       </div>
       
-    </div>
   );
 }
 
